@@ -28,11 +28,11 @@ namespace AOMEE
             // nop nop nop
             byte[] nops = { 0x90, 0x90, 0x90 };
 
-            byte[] bytesToWrite = new byte[2]; // dos bytes son suficientes para la poblacion, falta verificar si con 3 no hay problemas
+            // two bytes for max cap population
+            byte[] bytesToWrite = new byte[2];
 
             bytesToWrite[0] = (byte)(popCap & 0xff);
             bytesToWrite[1] = (byte)((popCap >> 8) & 0xff);
-            //Array.Reverse(bytesToWrite);
 
             processReadAndWrite.WriteMemory(popCapOffset, bytesToWrite);
             processReadAndWrite.WriteMemory(secondValidationOffset, nops);
@@ -44,21 +44,13 @@ namespace AOMEE
             int popCapOffset = 0x296BEA;
             int secondValidationOffset = 0x296C09;
 
-            byte[] pop300 = { 0x12, 0x0C}; // 300 poblacion cap
-            byte[] secondValidationBytes = { 0x0F, 0x4F, 0xC1};
+            byte[] pop300 = { 0x12, 0x0C}; // 12C = 300 = 300 population cap
+            byte[] secondValidationBytes = { 0x0F, 0x4F, 0xC1}; // cmovg eax, ecx
 
-            // vuelvo a escribir los 300 de poblacion
+            // restore original memory data
             processReadAndWrite.WriteMemory(popCapOffset, pop300);
-            // recupero el codigo en donde puse nops.
             processReadAndWrite.WriteMemory(secondValidationOffset, secondValidationBytes);
         }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            byte[] buffer = new byte[2];
-            int bufferReaded = processReadAndWrite.ReadMemory(0x00A97BEA, buffer);
-        }
-
 
         private void CurrentMaxPopConfirm_Click(object sender, EventArgs e)
         {
@@ -68,7 +60,7 @@ namespace AOMEE
         {
             if (e.KeyCode == Keys.Enter)
             {
-                int popCap = int.Parse(TotalMaxPop.Text); // maximo 65535 de popcap
+                int popCap = int.Parse(TotalMaxPop.Text); // 65535 max popcap
                 SetMaxPopCap(popCap);
             }
         }
@@ -80,7 +72,7 @@ namespace AOMEE
 
         private void TotalMaxPopConfirm_Click(object sender, EventArgs e)
         {
-            int popCap = int.Parse(TotalMaxPop.Text); // maximo 65535 de popcap
+            int popCap = int.Parse(TotalMaxPop.Text); // 65535 max popcap
             SetMaxPopCap(popCap);
         }
 

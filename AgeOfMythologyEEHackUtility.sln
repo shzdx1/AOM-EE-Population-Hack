@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsFormsApp2", "WindowsFormsApp2\WindowsFormsApp2.csproj", "{6D4A8FE1-3BD4-4E01-A209-75178E8573F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AOMEE", "WindowsFormsApp2\AOMEE.csproj", "{6D4A8FE1-3BD4-4E01-A209-75178E8573F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
