@@ -117,6 +117,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="heka.ico" />
+    <None Include="Resources\H9JVGXI.png" />
+    <None Include="Resources\2gyk1Ls.png" />
+    <None Include="Resources\nwoadhnaw.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
