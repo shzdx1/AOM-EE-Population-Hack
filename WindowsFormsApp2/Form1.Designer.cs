@@ -272,7 +272,7 @@
             this.InfoPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.InfoPanel.Location = new System.Drawing.Point(3, 133);
             this.InfoPanel.Name = "InfoPanel";
-            this.InfoPanel.Size = new System.Drawing.Size(762, 56);
+            this.InfoPanel.Size = new System.Drawing.Size(762, 69);
             this.InfoPanel.TabIndex = 9;
             // 
             // InfoBox
@@ -281,13 +281,13 @@
             this.InfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.InfoBox.Cursor = System.Windows.Forms.Cursors.Default;
             this.InfoBox.DetectUrls = false;
-            this.InfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.InfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.InfoBox.ForeColor = System.Drawing.Color.Red;
-            this.InfoBox.Location = new System.Drawing.Point(0, 0);
+            this.InfoBox.Location = new System.Drawing.Point(-3, 0);
             this.InfoBox.Name = "InfoBox";
             this.InfoBox.ReadOnly = true;
             this.InfoBox.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.None;
-            this.InfoBox.Size = new System.Drawing.Size(759, 53);
+            this.InfoBox.Size = new System.Drawing.Size(765, 66);
             this.InfoBox.TabIndex = 11;
             this.InfoBox.Text = "";
             // 
@@ -297,14 +297,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.BackgroundImage = global::AOMEEUtilityHack.Properties.Resources.H9JVGXI;
-            this.ClientSize = new System.Drawing.Size(774, 201);
+            this.ClientSize = new System.Drawing.Size(774, 211);
             this.Controls.Add(this.InfoPanel);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(790, 240);
+            this.MaximumSize = new System.Drawing.Size(790, 260);
             this.MinimumSize = new System.Drawing.Size(750, 39);
             this.Name = "Form1";
-            this.Text = "AOM EE Utility Hack by Skay";
+            this.Text = "AOM EE Population Hack";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel4.ResumeLayout(false);

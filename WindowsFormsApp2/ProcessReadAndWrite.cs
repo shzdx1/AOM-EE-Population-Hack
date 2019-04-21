@@ -14,12 +14,8 @@ namespace AOMEE
         const int PROCESS_VM_WRITE = 0x0020; 
         const int PROCESS_VM_OPERATION = 0x0008; 
         
-        // base address, where base memory address for aomx.exe starts.
-        int BASE_ADDRESS = 0x0;
-
         public Process process;
-        IntPtr processHandle;
-        Form1 form1;
+        public IntPtr processHandle;
 
         #region DLL IMPORT
         // Required dlls for memory read and write
@@ -33,14 +29,27 @@ namespace AOMEE
         static extern bool WriteProcessMemory(int hProcess, int lpBaseAddress, byte[] lpBuffer, int dwSize, ref int lpNumberOfBytesWritten);
         #endregion
 
-        public ProcessReadAndWrite(Form1 form1)
+        public ProcessReadAndWrite()
         {
-            this.form1 = form1;
             SetAOMProcess();
-            if(process != null)
+        }
+
+        public bool EnoughPermissions()
+        {
+            ProcessModule isHeAdmin;
+            try
             {
-                OpenProcess();
+                isHeAdmin = process.MainModule;
             }
+            catch (System.ComponentModel.Win32Exception errorInfo)
+            {
+                if (errorInfo.Message == "Access is denied")
+                {
+                    return false;
+                }
+            }
+            catch (InvalidOperationException) { return false; }
+            return true;
         }
 
         public bool SetAOMProcess()
@@ -59,8 +68,6 @@ namespace AOMEE
         public bool OpenProcess()
         {
             // added 0x1000 to the base address because x64dbg
-            BASE_ADDRESS = process.MainModule.BaseAddress.ToInt32() + 0x1000;
-
             processHandle = OpenProcess(PROCESS_ALL_ACCESS, false, process.Id);
 
             return (int)processHandle != 0;
@@ -88,7 +95,7 @@ namespace AOMEE
 
         public int GetBaseAddress()
         {
-            return BASE_ADDRESS;
+            return process.MainModule.BaseAddress.ToInt32() + 0x1000;
         }
     }
 }

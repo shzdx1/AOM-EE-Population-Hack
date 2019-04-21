@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -14,35 +15,35 @@ namespace AOMEE
         {
             InitializeComponent();
 
-            pRaW = new ProcessReadAndWrite(this);
-            new Thread(UpdateInfo).Start();
-            new Thread(CheckIfProcessAvailable).Start();
+            pRaW = new ProcessReadAndWrite();
+
+            Thread info = new Thread(UpdateInfo);
+            info.IsBackground = true;
+            info.Start();
         }
 
-        void CheckIfProcessAvailable()
+        bool CheckIfProcessAvailable()
         {
-            while (true)
+            if (pRaW.process == null && pRaW.SetAOMProcess() == false)
             {
-                if (pRaW.process == null && pRaW.SetAOMProcess() == false)
-                {
-                    ShowError("Error: Can't start Age of Mythology process. Please, open the game to continue.");
-                }
-                else if (pRaW.process.HasExited)
-                {
-                    ShowError("Error: Age of Mythology was closed.");
-                    pRaW.SetAOMProcess();
-                }
-                else if(!pRaW.OpenProcess())
-                {
-                    ShowError("Error: Unable to read aom.exe process. " +
-                    "If you are running aom.exe as admin open this program as administrator.");
-                }
-                else
-                {
-                    EnableForms(true);
-                }
-                Thread.Sleep(500);
+                ShowError("Error: Age of Mythology is Closed. Please, open the game to continue.");
+                isMaxPopEdited = false;
             }
+            else if (pRaW.process != null && pRaW.SetAOMProcess() == false)
+            {
+                ShowError("Error: Age of Mythology is Closed. Please, open the game to continue.");
+                isMaxPopEdited = false;
+            }
+            else if(!pRaW.EnoughPermissions())
+            {
+                ShowError("Error: Access is denied. Not enough permissions.\n" +
+                    "You are running AOM as administrator but this program is not running as administrator. Please, open this program as administrator.");
+            } else
+            {
+                EnableForms(true);
+                return true;
+            }
+            return false;
         }
 
         private void UpdateInfo()
@@ -50,6 +51,14 @@ namespace AOMEE
             // update general information every second
             while (true)
             {
+                if (!CheckIfProcessAvailable())
+                {
+                    Thread.Sleep(4000);
+                    continue;
+                }
+
+                pRaW.OpenProcess();
+
                 int maxPop = isMaxPopEdited? editedMaxPop : GetPlayerMaxPopulation(1);
                 int popCap = GetMaxPopulationCapacity(1);
                 try
@@ -62,7 +71,7 @@ namespace AOMEE
                 }
                 catch (InvalidOperationException) { }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(700);
             }
         }
 
@@ -86,8 +95,6 @@ namespace AOMEE
                 });
             }
             catch (InvalidOperationException) { }
-
-            
         }
 
         public void ShowError(string description)
@@ -96,14 +103,11 @@ namespace AOMEE
             {
                 Invoke((MethodInvoker)delegate ()
                 {
-                    InfoBox.Show();
                     EnableForms(false);
                     InfoBox.Text = description;
                 });
-                
             }
             catch (InvalidOperationException) { }
-
         }
 
         private int GetMaxPopulationCapacity(int PlayerID)
@@ -221,7 +225,6 @@ namespace AOMEE
 
             pRaW.WriteMemory(popCapOffset, bytesToWrite);
             pRaW.WriteMemory(secondValidationOffset, nops);
-
         }
 
         private void ResetMaxPopCap()
@@ -258,6 +261,7 @@ namespace AOMEE
 
         private void TotalPopReset_Click(object sender, EventArgs e)
         {
+            TotalMaxPop.Clear();
             ResetMaxPopCap();
         }
 
@@ -287,6 +291,7 @@ namespace AOMEE
 
         private void MaxPopReset_Click(object sender, EventArgs e)
         {
+            CurrentMaxPop.Clear();
             ResetMaxPop();
         }
     }
