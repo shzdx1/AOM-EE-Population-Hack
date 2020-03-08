@@ -1,5 +1,5 @@
 
-Status: Working on steam (AOM EE 2.7.4511863) (see releases for more information)
+```Status: **Working on steam (AOM EE 2.7.4511863) (see releases for more information)**```
 
 Basic Age of Mythology Extended Edition: Tale of the Dragon population hack.
 ![alt text](https://cdn.discordapp.com/attachments/660904280068456468/686086390597156921/unknown.png)
