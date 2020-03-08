@@ -173,17 +173,16 @@ namespace AOMEE
 
         private void SetMaxPop(int pop)
         {
-            int address = pRaW.GetBaseAddress() + 0x292ED6;
+            int address = pRaW.GetBaseAddress() + 0x294666;
 
-            // mov eax, pop
-            // ret = 0xC3
+            // MOV EDX, POPULATION
             byte[] maxPopInstrucction = {
-                0xB8,
+                0xB8, // MOV
                 (byte)(pop & 0xff),
                 (byte)((pop >> 8) & 0xff),
-                (byte)((pop >> 16) & 0xff),
-                (byte)((pop >> 24) & 0xff),
-                0xC3
+                0x00,
+                0x00,
+                0xC3, // nop
             };
             pRaW.WriteMemory(address, maxPopInstrucction);
             isMaxPopEdited = true;
@@ -192,10 +191,9 @@ namespace AOMEE
 
         private void ResetMaxPop()
         {
-            int address = pRaW.GetBaseAddress() + 0x292ED6;
+            int address = pRaW.GetBaseAddress() + 0x294666;
 
-            // 6 bytes because mov eax,4bytes, ret uses 6 bytes
-            // ret int3 int3 int3 int3 int3
+            // 6 bytes: ret, int3, int3, int3, int3, int3
             byte[] mpRestorationBytes =
             {
                 0xC3,
@@ -211,33 +209,55 @@ namespace AOMEE
 
         private void SetMaxPopCap(int popCap)
         {
-            int popCapOffset = pRaW.GetBaseAddress() + 0x296BEA;
-            int secondValidationOffset = pRaW.GetBaseAddress() + 0x296C09;
+            int popCapOffset = pRaW.GetBaseAddress() + 0x297F61;
+            Console.WriteLine(popCapOffset);
+            int popCapOffset2 = pRaW.GetBaseAddress() + 0x297F73;
+            int validationOffset = pRaW.GetBaseAddress() + 0x297F7B;
+
+
+            // one byte for EAX and two bytes for max cap population
+            byte[] offset1Bytes = new byte[3];
+
+            offset1Bytes[0] = 0xB8;
+            offset1Bytes[1] = (byte)(popCap & 0xff);
+            offset1Bytes[2] = (byte)((popCap >> 8) & 0xff);
+
+            // one byte for EAX, two bytes for max cap population and one byte for nop
+            byte[] offset2Bytes = { offset1Bytes[0], offset1Bytes[1], offset1Bytes[2], 0x00, 0x00, 0x90 };
 
             // nop nop nop
             byte[] nops = { 0x90, 0x90, 0x90 };
 
-            // two bytes for max cap population
-            byte[] bytesToWrite = new byte[2];
 
-            bytesToWrite[0] = (byte)(popCap & 0xff);
-            bytesToWrite[1] = (byte)((popCap >> 8) & 0xff);
-
-            pRaW.WriteMemory(popCapOffset, bytesToWrite);
-            pRaW.WriteMemory(secondValidationOffset, nops);
+            pRaW.WriteMemory(popCapOffset, offset1Bytes);
+            pRaW.WriteMemory(popCapOffset2, offset2Bytes);
+            //pRaW.WriteMemory(validationOffset, nops);
         }
 
         private void ResetMaxPopCap()
         {
-            int popCapOffset = pRaW.GetBaseAddress() + 0x296BEA;
-            int secondValidationOffset = pRaW.GetBaseAddress() + 0x296C09;
+            int popCapOffset = pRaW.GetBaseAddress() + 0x297F61;
+            int popCapOffset2 = pRaW.GetBaseAddress() + 0x297F73;
+            int validationOffset = pRaW.GetBaseAddress() + 0x297F7B;
 
-            byte[] pop300 = { 0x2C, 0x01}; // 12C = 300 = 300 population cap
-            byte[] secondValidationBytes = { 0x0F, 0x4F, 0xC1}; // cmovg eax, ecx
 
-            // restore original memory data
-            pRaW.WriteMemory(popCapOffset, pop300);
-            pRaW.WriteMemory(secondValidationOffset, secondValidationBytes);
+            // MOV EAX, 12C
+            byte[] offset1Bytes = new byte[3];
+
+            offset1Bytes[0] = 0xB8;
+            offset1Bytes[1] = (byte)(300 & 0xff);
+            offset1Bytes[2] = (byte)((300 >> 8) & 0xff);
+
+            // MOV EAX, DWORD PTR DS:[ECX+0x768]
+            byte[] offset2Bytes = { 0x8B, 0x81, 0x68, 0x07, 0x00, 0x00 };
+
+            // CMOVLE EAX, EDX
+            byte[] cmovle = { 0x0F, 0x4E, 0xC2 };
+
+
+            pRaW.WriteMemory(popCapOffset, offset1Bytes);
+            pRaW.WriteMemory(popCapOffset2, offset2Bytes);
+            pRaW.WriteMemory(validationOffset, cmovle);
         }
 
         private void CurrentMaxPopConfirm_Click(object sender, EventArgs e)
@@ -293,6 +313,11 @@ namespace AOMEE
         {
             CurrentMaxPop.Clear();
             ResetMaxPop();
+        }
+
+        private void InfoBox_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
